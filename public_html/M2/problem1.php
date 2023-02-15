@@ -8,6 +8,7 @@ function processArray($arr) {
     echo "<br>Processing Array:<br><pre>" . var_export($arr, true) . "</pre>";
     echo "<br>Odds output:<br>";
     //TODO add logic here to echo out only odd values
+    //tp7, 2/13/2022, returns odd values for each array in the list
     for ($x=0; $x<count($arr); $x++)
     {
         if ($arr[$x]%2 != 0)

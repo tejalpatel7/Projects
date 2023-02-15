@@ -7,8 +7,9 @@ function getTotal($arr) {
     echo "<br>Processing Array:<br><pre>" . var_export($arr, true) . "</pre>";
     $total = 0.00;
     //TODO do adding here
+    //tp7, 2/13/2022, returns total values for each array in the list
     foreach ($arr as $x){
-        $total = $x=$total;
+        $total = $x+$total;
     }
     //TODO do rounding stuff here
     $total = round($total, 2);
