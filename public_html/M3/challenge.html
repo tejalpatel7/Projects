@@ -8,45 +8,79 @@
         window.addEventListener("load", () => {
             console.log("loaded via javascript");
             //TODO: add any extra onload processing you may need here
-            
+            getCurrentSelection();
         });
         function getCurrentSelection() {
             setTimeout(() => {
                 //added this delay here as some solutions may require it to update properly (i.e., click code may complete before the navigation changes)
                 //TODO: add code for processing the current selection 
-                var currentClickeddLinkText = link.innerText;
+                var links = document.querySelectorAll('a');
+                links[0].addEventListener('click', () => {
+                    updateCurrentPage('Login');
+                });
+                links[1].addEventListener('click', () => {
+                    updateCurrentPage('Register');
+                });
+                links[2].addEventListener('click', () => {
+                    updateCurrentPage('Profile');
+                });
+                links[3].addEventListener('click', () => {
+                    updateCurrentPage('Logout');
+                });
 
                 //Note: likely you'll want to call updateCurrentPage towards the end
-                updateCurrentPage(currentClickeddLinkText);
+                //updateCurrentPage(currentClickeddLinkText);
             }, 100);
         }
     </script>
     <style>
         /* TODO: make edits here */
-        ul li{
+        nav li{
+            /*makes the navigation horizpntal*/
             display: inline;
             padding: 0.3rem;
             font-size: large;
         }
-        ul{
+        nav ul{
+            /*Get rid of the navigation list item markers*/
             list-style-type: none;
-            background-color: rgb(156, 140, 80);
+            margin: 0;
             padding: 0.2rem 1.4rem;
+            /*Give the navigation a background*/
+            background-color: rgb(204, 162, 71);
+            color:black;
+            
         }
         ul a:hover{
+            /*Make the links (or their surrounding area) change color on mouseover*/
+            background-color: beige;
             color: rgb(70, 92, 216);
         }
+        ul{
+            list-style: none;
+        }
         ul li::before{
+            /*Change the "bullet points" of this entire list to checkmarks (✓)*/
             content: '✓'
         }
-        ul li a {
-            display: inline-block;
-            padding: 0.3rem;
+        nav li::before{
+            content: none;
         }
-        h1::first-letter,   
-        a::first-letter {
-            text-transform: uppercase;
+        h1,   
+        a{
+            /*Use CSS to uppercase the first character of the content*/
+            /*text-transform: uppercase;*/
+            text-transform: capitalize;
         }
+        h1{
+            background-color: rgb(81, 95, 158);
+        }
+        /*Add some styling of your choice*/
+        ul{
+            background-color: rgb(179, 189, 155);
+        }
+
+
     </style>
     <!-- make the necessary edits above this line -->
 
