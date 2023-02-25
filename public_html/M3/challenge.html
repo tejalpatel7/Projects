@@ -15,15 +15,19 @@
                 //added this delay here as some solutions may require it to update properly (i.e., click code may complete before the navigation changes)
                 //TODO: add code for processing the current selection 
                 var links = document.querySelectorAll('a');
+                /*Any time a navigation link login is clicked, updates th econtent of h1 and title*/
                 links[0].addEventListener('click', () => {
                     updateCurrentPage('Login');
                 });
+                /*Any time a navigation link register is clicked, updates th econtent of h1 and title*/
                 links[1].addEventListener('click', () => {
                     updateCurrentPage('Register');
                 });
+                /*Any time a navigation link profile is clicked, updates th econtent of h1 and title*/
                 links[2].addEventListener('click', () => {
                     updateCurrentPage('Profile');
                 });
+                /*Any time a navigation link logout is clicked, updates th econtent of h1 and title*/
                 links[3].addEventListener('click', () => {
                     updateCurrentPage('Logout');
                 });
@@ -79,8 +83,6 @@
         ul{
             background-color: rgb(179, 189, 155);
         }
-
-
     </style>
     <!-- make the necessary edits above this line -->
 
