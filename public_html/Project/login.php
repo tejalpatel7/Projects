@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . "/../../partials/nav.php");
+require(__DIR__ . "/../../partials/nav.php");
 ?>
 <form onsubmit="return validate(this)" method="POST">
     <div>
@@ -10,11 +10,7 @@ require_once(__DIR__ . "/../../partials/nav.php");
         <label for="pw">Password</label>
         <input type="password" id="pw" name="password" required minlength="8" />
     </div>
-    <div>
-        <label for="confirm">Confirm</label>
-        <input type="password" name="confirm" required minlength="8" />
-    </div>
-    <input type="submit" value="Register" />
+    <input type="submit" value="Login" />
 </form>
 <script>
     function validate(form) {
@@ -26,11 +22,10 @@ require_once(__DIR__ . "/../../partials/nav.php");
 </script>
 <?php
 //TODO 2: add PHP Code
-if (isset($_POST["email"]) && isset($_POST["password"]) && isset($_POST["confirm"])) {
-    $email = se($_POST, "email", "", false); //$_POST ["email"];
-    $password = se($_POST, "password", "", false); //$_POST ["password"];
-    $confirm = se($_POST, "confirm", "", false); //$_POST ["confirm"];
-   
+if (isset($_POST["email"]) && isset($_POST["password"])) {
+    $email = se($_POST, "email", "", false);
+    $password = se($_POST, "password", "", false);
+
     //TODO 3
     $hasError = false;
     if (empty($email)) {
@@ -48,30 +43,31 @@ if (isset($_POST["email"]) && isset($_POST["password"]) && isset($_POST["confirm
         echo "password must not be empty";
         $hasError = true;
     }
-    if (empty($confirm)) {
-        echo "Confirm password must not be empty";
-        $hasError = true;
-    }
     if (strlen($password) < 8) {
         echo "Password too short";
         $hasError = true;
     }
-    if (strlen($password) > 0 && $password !== $confirm) {
-        echo "Passwords must match";
-        $hasError = true;
-    }
     if (!$hasError) {
-        echo "Welcome, $email";
         //TODO 4
-        //echo "Welcome, $email";
-        $hash = password_hash($password, PASSWORD_BCRYPT);
         $db = getDB();
-        $stmt = $db->prepare("INSERT INTO Users (email, password) VALUES(:email, :password)");
+        $stmt = $db->prepare("SELECT email, password from Users where email = :email");
         try {
-            $stmt->execute([":email" => $email, ":password" => $hash]);
-            echo "Successfully registered!";
+            $r = $stmt->execute([":email" => $email]);
+            if ($r) {
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($user) {
+                    $hash = $user["password"];
+                    unset($user["password"]);
+                    if (password_verify($password, $hash)) {
+                        echo "Welcome $email";
+                    } else {
+                        echo "Invalid password";
+                    }
+                } else {
+                    echo "Email not found";
+                }
+            }
         } catch (Exception $e) {
-            echo "There was a problem registering";
             echo "<pre>" . var_export($e, true) . "</pre>";
         }
     }
