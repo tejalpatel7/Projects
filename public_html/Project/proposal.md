@@ -17,23 +17,23 @@
 ### Proposal Checklist and Evidence
 
 - Milestone 1
-    - [ ] \(mm/dd/yyyy of completion) User will be able to register a new account
+    - [X] \(04/02/2023 of completion) User will be able to register a new account
         -  Link to related .md file: [Link Name](link url) 
-    - [ ] \(mm/dd/yyyy of completion) User will be able to login to their account (given they enter the correct credentials)
+    - [X] \(04/02/2023 of completion) User will be able to login to their account (given they enter the correct credentials)
         -  Link to related .md file: [Link Name](link url)
-    - [ ] \(mm/dd/yyyy of completion) User will be able to logout
+    - [X] \(04/10/2023 of completion) User will be able to logout
         -  Link to related .md file: [Link Name](link url)
-    - [ ] \(mm/dd/yyyy of completion) Basic security rules implemented
+    - [X] \(04/17/2023 of completion) Basic security rules implemented
         -  Link to related .md file: [Link Name](link url) 
-    - [ ] \(mm/dd/yyyy of completion) Basic Roles implemented
+    - [X] \(04/17/2023 of completion) Basic Roles implemented
         -  Link to related .md file: [Link Name](link url)
-    - [ ] \(mm/dd/yyyy of completion) Site should have basic styles/theme applied; everything should be styled
+    - [X] \(04/18/2023 of completion) Site should have basic styles/theme applied; everything should be styled
         -  Link to related .md file: [Link Name](link url)
-    - [ ] \(mm/dd/yyyy of completion) Any output messages/errors should be “user friendly”
+    - [X] \(04/18/2023 of completion) Any output messages/errors should be “user friendly”
         -  Link to related .md file: [Link Name](link url) 
-    - [ ] \(mm/dd/yyyy of completion) User will be able to see their profile
+    - [X] \(04/20/2023 of completion) User will be able to see their profile
         -  Link to related .md file: [Link Name](link url)
-    - [ ] \(mm/dd/yyyy of completion) User will be able to edit their profile
+    - [X] \(04/20/2023 of completion) User will be able to edit their profile
         -  Link to related .md file: [Link Name](link url)  
 
 - Milestone 2
