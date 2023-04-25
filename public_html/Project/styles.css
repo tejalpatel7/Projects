@@ -13,7 +13,7 @@
 .alert-info {
     background-color: teal;
 }
-nav li{display: inline; background-color: rgb(32, 26, 26);}
+nav li{display: inline; background-color: light;}
 nav li a{color: beige}
 input{border-radius: 50%;}
 body{
