@@ -15,13 +15,6 @@ try {
     flash("Error fetching items", "danger");
 }
 ?>
-<script>
-    function purchase(item) {
-        console.log("TODO purchase item", item);
-        alert("It's almost like you purchased an item, but not really");
-        //TODO create JS helper to update all show-balance elements
-    }
-</script>
 
 <div class="container-fluid">
     <h1>Shop</h1>
@@ -42,7 +35,12 @@ try {
                     </div>
                     <div class="card-footer">
                         Cost: <?php se($item, "cost"); ?>
-                        <button onclick="purchase('<?php se($item, 'id'); ?>')" class="btn btn-primary">Buy Now</button>
+                        <form method="POST" action="Cart.php">
+                            <input type="hidden" name="item_id" value="<?php se($item, "id");?>"/>
+                            <input type="hidden" name="action" value="add"/>
+                            <input type="number" name="desired_quantity" value="1" min="1" max="<?php se($item, "stock");?>"/>
+                            <input type="submit" class="btn btn-primary" value="Add to Cart"/>
+                        </form>
                     </div>
                 </div>
             </div>
