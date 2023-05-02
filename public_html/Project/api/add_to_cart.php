@@ -10,11 +10,11 @@ $desired_quantity = (int)se($_POST, "desired_quantity", 0, false);
 $response = ["status" => 400, "message" => "Invalid data"];
 http_response_code(400);
 if (isset($item_id) && $desired_quantity > 0) {
-    echo "thanl you";
+    echo "thank you";
     if (is_logged_in()) {
         $db = getDB();
 
-        $getstmt = $db->prepare("SELECT * FROM RM_Cart where item_id =:id and :uid");
+        $getstmt = $db->prepare("SELECT * FROM Cart where item_id =:id and :uid");
         $getstmt->execute([":id" => $item_id, ":uid" => get_user_id()]);
         if ($r) {
             $desired_quantity = $r['quantity'] + $desired_quantity;
@@ -25,7 +25,7 @@ if (isset($item_id) && $desired_quantity > 0) {
         }
         else{
              //note adding to cart doesn't verify price or quantity
-            $stmt = $db->prepare("INSERT INTO RM_Cart (item_id, quantity, user_id) VALUES(:iid, :q, :uid) ON DUPLICATE KEY UPDATE quantity = quantity + :q");
+            $stmt = $db->prepare("INSERT INTO Cart (item_id, quantity, user_id) VALUES(:iid, :q, :uid) ON DUPLICATE KEY UPDATE quantity = quantity + :q");
             $stmt->bindValue(":iid", $item_id, PDO::PARAM_INT);
             $stmt->bindValue(":q", $desired_quantity, PDO::PARAM_INT);
             $stmt->bindValue(":uid", get_user_id(), PDO::PARAM_INT);

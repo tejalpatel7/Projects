@@ -3,7 +3,7 @@ require(__DIR__ . "/../../partials/nav.php");
 
 $results = [];
 $db = getDB();
-$stmt = $db->prepare("SELECT id, name, description, cost, stock, image FROM RM_Items WHERE stock > 0 LIMIT 50");
+$stmt = $db->prepare("SELECT id, name, description, cost, stock, image FROM Items WHERE stock > 0 LIMIT 50");
 try {
     $stmt->execute();
     $r = $stmt->fetchAll(PDO::FETCH_ASSOC);

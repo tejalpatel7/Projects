@@ -8,8 +8,8 @@ if (!empty($action)) {
     $db = getDB();
     switch ($action) {
         case "add":
-            $query = "INSERT INTO RM_Cart (item_id, desired_quantity, unit_price, user_id)
-            VALUES (:iid, :dq, (SELECT cost FROM RM_Items where id = :iid), :uid) ON DUPLICATE KEY UPDATE
+            $query = "INSERT INTO Cart (item_id, desired_quantity, unit_price, user_id)
+            VALUES (:iid, :dq, (SELECT cost FROM Items where id = :iid), :uid) ON DUPLICATE KEY UPDATE
             desired_quantity = desired_quantity + :dq";
             $stmt = $db->prepare($query);
             $stmt->bindValue(":iid", se($_POST, "item_id", 0, false), PDO::PARAM_INT);
@@ -24,7 +24,7 @@ if (!empty($action)) {
             }
             break;
         case "update":
-            $query = "UPDATE RM_Cart set desired_quantity = :dq WHERE id = :cid AND user_id = :uid";
+            $query = "UPDATE Cart set desired_quantity = :dq WHERE id = :cid AND user_id = :uid";
             $stmt = $db->prepare($query);
             $stmt->bindValue(":dq", se($_POST, "desired_quantity", 0, false), PDO::PARAM_INT);
             //cart id specifies a specific cart item
@@ -35,22 +35,27 @@ if (!empty($action)) {
                 $stmt->execute();
                 flash("Updated item quantity", "success");
             } catch (PDOException $e) {
-                //TODO handle item removal when desired_quantity is <= 0
-                //TODO handle any other update related rules per your proposal
-                
-
                 error_log(var_export($e, true));
                 flash("Error updating item quantity", "danger");
             }
             break;
         case "delete":
-            flash("Developer: You implement this logic", "warning");
-            //TODO you do this part
+            $query = "DELETE FROM Cart WHERE id = :cid AND user_id = :uid";
+            $stmt = $db->prepare($query);
+            $stmt->bindValue(":cid", se($_POST, "cart_id", 0, false), PDO::PARAM_INT);
+            $stmt->bindValue(":uid", get_user_id(), PDO::PARAM_INT);
+            try {
+                $stmt->execute();
+                flash("Deleted item from cart", "success");
+            } catch (PDOException $e) {
+                error_log(var_export($e, true));
+                flash("Error deleting item from cart", "danger");
+            }
             break;
     }
 }
 $query = "SELECT cart.id, item.stock, item.name, cart.unit_price, (cart.unit_price * cart.desired_quantity) as subtotal, cart.desired_quantity
-FROM RM_Items as item JOIN RM_Cart as cart on item.id = cart.item_id
+FROM Items as item JOIN Cart as cart on item.id = cart.item_id
  WHERE cart.user_id = :uid";
 $db = getDB();
 $stmt = $db->prepare($query);

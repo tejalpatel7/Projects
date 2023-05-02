@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS RM_Items(
+CREATE TABLE IF NOT EXISTS Items(
     id int AUTO_INCREMENT PRIMARY  KEY,
     name varchar(30) UNIQUE, -- alternatively you'd have a SKU that's unique
     description text,
