@@ -4,7 +4,7 @@ require(__DIR__ . "/../../partials/nav.php");
 $results = [];
 $db = getDB();
 
-//Sort and Filters
+//Sort and Filters- ucid tp7, date: 5/2/2023
 $col = se($_GET, "col", "cost", false);
 //allowed list
 if (!in_array($col, ["cost", "stock", "name", "created"])) {
@@ -17,10 +17,8 @@ if (!in_array($order, ["asc", "desc"])) {
 }
 //get name partial search
 $name = se($_GET, "name", "", false);
-
 //$query = $db->prepare("SELECT id, name, description, cost, stock, image FROM Items WHERE stock > 0 LIMIT 50");
 //$params = [];
-
 //split query into data and total
 $base_query = "SELECT id, name, description, cost, stock, image FROM Items items";
 $total_query = "SELECT count(1) as total FROM Items items";
@@ -36,7 +34,6 @@ if (!empty($name)) {
 if (!empty($col) && !empty($order)) {
     $query .= " ORDER BY $col $order"; //be sure you trust these values, I validate via the in_array checks above
 }
-
 //paginate function
 $per_page = 10;
 paginate($total_query . $query, $params, $per_page);
@@ -157,6 +154,8 @@ try {
                             <input type="hidden" name="action" value="add"/>
                             <input type="number" name="desired_quantity" value="1" min="1" max="<?php se($item, "stock");?>"/>
                             <input type="submit" class="btn btn-primary" value="Add to Cart"/>
+                            <a href="product_details.php?item_id=<?php se($item, 'id');?>">More Info</a>
+                            <a href="admin/edit_item.php?id=<?php se($item, "id"); ?>">Edit</a>
                         </form>
                     </div>
                 </div>
