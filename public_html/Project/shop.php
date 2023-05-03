@@ -36,7 +36,14 @@ if (!empty($name)) {
 if (!empty($col) && !empty($order)) {
     $query .= " ORDER BY $col $order"; //be sure you trust these values, I validate via the in_array checks above
 }
+
+//paginate function
+$per_page = 10;
+paginate($total_query . $query, $params, $per_page);
+
+
 //get the total
+/*
 $stmt = $db->prepare($total_query . $query);
 $total =0;
 try {
@@ -53,6 +60,7 @@ try {
 $page = se($_GET, "page", 1, false); //default to page 1 (human readable number)
 $per_page = 10; //how many items to show per page (hint, this could also be something the user can change via a dropdown or similar)
 $offset = ($page - 1) * $per_page;
+*/
 $query .= " LIMIT :offset, :count";
 $params[":offset"] = $offset;
 $params[":count"] = $per_page;
@@ -133,7 +141,6 @@ try {
             <div class="col">
                 <div class="card bg-light">
                     <div class="card-header">
-                        RM Placeholder
                     </div>
                     <?php if (se($item, "image", "", false)) : ?>
                         <img src="<?php se($item, "image"); ?>" class="card-img-top" alt="...">

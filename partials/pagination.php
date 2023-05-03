@@ -1,12 +1,14 @@
 <!-- this will be moved into a partial file for reusability-->
 <?php
-if (!isset($total)) {
-    flash("Note to Dev: The total variable is undefined", "danger");
+if (!isset($total_pages)) {
+    flash("Note to Dev: The total_pages variable is undefined", "danger");
+    $total_pages = 0;
 }
-if (!isset($per_page)) {
-    flash("Note to Dev: The per_page variable is undefined", "danger");
+if (!isset($page)) {
+    flash("Note to Dev: The page variable is undefined", "danger");
+    $page = 1;
 }
-$total_pages = ceil($total / $per_page);
+//$total_pages = ceil($total / $per_page);
 //updates or inserts page into query string while persisting anything already present
 function persistQueryString($page)
 {
