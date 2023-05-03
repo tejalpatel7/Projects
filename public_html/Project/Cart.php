@@ -116,9 +116,21 @@ try {
         <?php endif; ?>
         <tr>
             <td colspan="100%">Total: <?php se($total, null, 0); ?></td>
+            <td>
+                <form method="POST" action="checkout.php">
+                    <input class="btn btn-primary" type="submit" value="Place Order" name="GoToCheckout"/>
+                    <input type="hidden" name="total_cost" value="<?php echo($total)?>"/>
+                </form>
+            </td>
+
+
+
         </tr>
+
         </tbody>
     </table>
+
+
 </div>
 <?php
 require(__DIR__ . "/../../partials/flash.php");

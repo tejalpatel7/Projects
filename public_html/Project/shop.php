@@ -129,7 +129,15 @@ try {
         </div>
 </form>
 
-
+<script>
+    function purchase(item, stock) {
+        console.log("TODO purchase item", item);
+            //alert("It's almost like you purchased an item, but not really");
+            if (add_to_cart) {
+                add_to_cart(item, 1, stock);
+            }
+        }
+</script>
 
 <div class="container-fluid">
     <h1>Shop</h1>
