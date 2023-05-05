@@ -3,6 +3,6 @@ CREATE TABLE IF NOT EXISTS OrderItems(
     order_id int,
     item_id int,
     desired_quantity int DEFAULT  1,
-    unit_price int,
-    FOREIGN KEY (item_id) REFERENCES Products(id)
+    unit_price int
+    -- FOREIGN KEY (item_id) REFERENCES Items(id)
 )
