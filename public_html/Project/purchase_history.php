@@ -21,7 +21,7 @@ try {
 ?>
 
 <div class="container-fluid">
-    <h1>Your Order History</h1>
+    <h1>Order History</h1>
     <table class="table text-lightgrey">
         <thead>
             <th>Total Price</th>
