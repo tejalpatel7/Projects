@@ -125,7 +125,7 @@ try {
                 <?php $totalValue = $totalValue + intval(se($item, "total_price", "", false));?>
                 <td>     
                     <form method = "POST" action="OrderHistoryUsers.php">
-                    <input class="btn btn-primary" type="submit" value="More Info"/>
+                    <input class="btn btn-primary" type="submit" value="More Info" name="Order-History-Extra-Info-ShowOwner"/>
                     <input type="hidden" name="order_id" value="<?php se($item, "id"); ?>"/>
                     </form>
                 </td>

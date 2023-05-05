@@ -81,6 +81,7 @@ if (isset($_POST["GoToCheckout"]))
     }
 </script>
 <?php
+//tp7, date 5/5/2023
 if (isset($_POST["ProceedWithCheckout"]))
 {
 $stmt = $db->prepare("SELECT Items.stock as PQ, Items.name as PN, Cart.item_id, Items.cost as PP, Cart.desired_quantity as CQ, Cart.unit_price as CP FROM Cart INNER JOIN Items ON Cart.item_id = Items.id WHERE Cart.user_id = :uid");
