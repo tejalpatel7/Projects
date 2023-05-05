@@ -45,7 +45,7 @@
         var speed = 6; // Distance to move each frame
         var sideLength = 50; // Length of each side of the square
 
-        //ucid: tp7
+        //ucid: tp7, date: 5/5/2023
         //added variable angle and set  it to 0
         var angle = 0;
 
@@ -60,7 +60,7 @@
         var targetY = 0;
         var targetLength = 25;
 
-        //ucid: tp7
+        //ucid: tp7 date:5/5/2023
         //added variable targetA, targetB and set  it to 0
         //added targetlength and set it to
         var targetA = 0;
@@ -159,7 +159,7 @@
             targetX = Math.round(Math.random() * canvas.width - targetLength);
             targetY = Math.round(Math.random() * canvas.height - targetLength);
 
-            //ucid: tp7
+            //ucid: tp7, date 5/5/2023
             //set targetA and targetB
             //using math.random and the width of canvas and tagetength function to round the targets
             targetA = Math.round(Math.random() * canvas.width - targetLength);
@@ -230,28 +230,19 @@
             //do player square rotation
             //translate
             context.translate(x + sideLength/2,y + sideLength/2); // center of square
-            
-            //ucid: tp7
             // rotate
             context.rotate((angle % 360) * Math.PI / 180); // rotate one way
-    
-            //ucid: tp7
             //translate
             context.translate(-(x + sideLength/2),-(y + sideLength/2));
-            
-            //ucid: tp7
             // Draw the square
             context.fillStyle = '#FF0000';
-            context.fillRect(x, y, sideLength, sideLength);
-            
+            context.fillRect(x, y, sideLength, sideLength);    
             context.translate(x + sideLength/2,y + sideLength/2);
             context.rotate((-angle % 360) * Math.PI / 180); // unrotate to keep everything else the smae
             context.translate(-(x + sideLength/2),-(y + sideLength/2));
             // angle changes every draw
             //so the square spins because the angle is changing and rotate and rotate back each draw
-
-            context.restore();
-            
+            context.restore();   
             // Draw the target 
             context.fillStyle = '#00FF00';
             context.fillRect(targetX, targetY, targetLength, targetLength);
