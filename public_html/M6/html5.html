@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        #center {
+            width: 50%;
+            margin-left: auto;
+            margin-right: auto;
+            align-content: center;
+            text-align: center;
+
+            height: 50%;
+            padding: 0px;
+        }
+
+        canvas,
+        body {
+            padding: 0px;
+            margin: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Game</h1>
+    <div id="center">
+        <canvas id="canvas" width="400px" height="400px"></canvas>
+    </div>
+    <span id="endGame"></span>
+    <script>
+        // Collect The Square game
+
+        // Get a reference to the canvas DOM element
+        var canvas = document.getElementById('canvas');
+        // Get the canvas drawing context
+        var context = canvas.getContext('2d');
+
+        // Your score
+        var score = 0;
+
+        // Properties for your square
+        var x = 50; // X position
+        var y = 100; // Y position
+        var speed = 6; // Distance to move each frame
+        var sideLength = 50; // Length of each side of the square
+
+        //ucid: tp7, date: 5/5/2023
+        //added variable angle and set  it to 0
+        var angle = 0;
+
+        // FLags to track which keys are pressed
+        var down = false;
+        var up = false;
+        var right = false;
+        var left = false;
+
+        // Properties for the target square
+        var targetX = 0;
+        var targetY = 0;
+        var targetLength = 25;
+
+        //ucid: tp7 date:5/5/2023
+        //added variable targetA, targetB and set  it to 0
+        //added targetlength and set it to
+        var targetA = 0;
+        var targetB = 0;
+        var targetLength = 25;
+
+        // Determine if number a is within the range b to c (exclusive)
+        function isWithin(a, b, c) {
+            return (a > b && a < c);
+        }
+
+        // Countdown timer (in seconds)
+        var countdown = 30;
+        // ID to track the setTimeout
+        var id = null;
+
+        // Listen for keydown events
+        window.addEventListener('keydown', function (event) {
+            event.preventDefault();
+            console.log(event.key, event.keyCode);
+            if (event.keyCode === 40) { // DOWN
+                down = true;
+            }
+            if (event.keyCode === 38) { // UP
+                up = true;
+            }
+            if (event.keyCode === 37) { // LEFT
+                left = true;
+            }
+            if (event.keyCode === 39) { // RIGHT
+                right = true;
+            }
+        });
+
+        // Listen for keyup events
+        window.addEventListener('keyup', function (event) {
+            event.preventDefault();
+            console.log(event.key, event.keyCode);
+            if (event.keyCode === 40) { // DOWN
+                down = false;
+            }
+            if (event.keyCode === 38) { // UP
+                up = false;
+            }
+            if (event.keyCode === 37) { // LEFT
+                left = false;
+            }
+            if (event.keyCode === 39) { // RIGHT
+                right = false;
+            }
+        });
+
+        // Show the start menu
+        function menu() {
+            erase();
+            context.fillStyle = '#000000';
+            context.font = '36px Arial';
+            context.textAlign = 'center';
+            context.fillText('Collect the Square!', canvas.width / 2, canvas.height / 4);
+            context.font = '24px Arial';
+            context.fillText('Click to Start', canvas.width / 2, canvas.height / 2);
+            context.font = '18px Arial'
+            context.fillText('Use the arrow keys to move', canvas.width / 2, (canvas.height / 4) * 3);
+            // Start the game on a click
+            canvas.addEventListener('click', startGame);
+        }
+
+        // Start the game
+        function startGame() {
+            // Reduce the countdown timer ever second
+            id = setInterval(function () {
+                countdown--;
+            }, 1000)
+            // Stop listening for click events
+            canvas.removeEventListener('click', startGame);
+            // Put the target at a random starting point
+            moveTarget();
+            // Kick off the draw loop
+            draw();
+        }
+
+        // Show the game over screen
+        function endGame() {
+            // Stop the countdown
+            clearInterval(id);
+            // Display the final score
+            erase();
+            context.fillStyle = '#000000';
+            context.font = '24px Arial';
+            context.textAlign = 'center';
+            context.fillText('Final Score: ' + score, canvas.width / 2, canvas.height / 2);
+        }
+
+        // Move the target square to a random position
+        function moveTarget() {
+            targetX = Math.round(Math.random() * canvas.width - targetLength);
+            targetY = Math.round(Math.random() * canvas.height - targetLength);
+
+            //ucid: tp7, date 5/5/2023
+            //set targetA and targetB
+            //using math.random and the width of canvas and tagetength function to round the targets
+            targetA = Math.round(Math.random() * canvas.width - targetLength);
+            targetB = Math.round(Math.random() * canvas.height - targetLength)
+
+        }
+
+        // Clear the canvas
+        function erase() {
+            context.fillStyle = '#FFFFFF';
+            context.fillRect(0, 0, 600, 400);
+        }
+
+        // The main draw loop
+        function draw() {
+            console.log([x, y])
+            erase();
+            angle+=1;
+            // Move the square
+            if (down) {
+                y += speed;
+            }
+            if (up) {
+                y -= speed;
+            }
+            if (right) {
+                x += speed;
+            }
+            if (left) {
+                x -= speed;
+            }
+            // Keep the square within the bounds
+            if (y + sideLength > canvas.height) {
+                y = canvas.height - sideLength;
+            }
+            if (y < 0) {
+                y = 0;
+            }
+            if (x < 0) {
+                x = 0;
+            }
+            if (x + sideLength > canvas.width) {
+                x = canvas.width - sideLength;
+            }
+
+            // Collide with the target
+            if (isWithin(targetX, x, x + sideLength) || isWithin(targetX + targetLength, x, x + sideLength)) { // X
+                if (isWithin(targetY, y, y + sideLength) || isWithin(targetY + targetLength, y, y + sideLength)) { // Y
+                    // Respawn the target
+                    moveTarget();
+                    // Increase the score
+                    score++;
+                }
+            }
+
+            //ucid: tp7
+            // Collide with the target
+            if (isWithin(targetA, x, x + sideLength) || isWithin(targetA + targetLength, x, x + sideLength)) { // X
+                if (isWithin(targetB, y, y + sideLength) || isWithin(targetB + targetLength, y, y + sideLength)) { // Y
+                    // Respawn the target
+                    moveTarget();
+                    // Increase the score
+                    score++;
+                }
+            }
+
+            //ucid: tp7
+            //do player square rotation
+            //translate
+            context.translate(x + sideLength/2,y + sideLength/2); // center of square
+            // rotate
+            context.rotate((angle % 360) * Math.PI / 180); // rotate one way
+            //translate
+            context.translate(-(x + sideLength/2),-(y + sideLength/2));
+            // Draw the square
+            context.fillStyle = '#FF0000';
+            context.fillRect(x, y, sideLength, sideLength);    
+            context.translate(x + sideLength/2,y + sideLength/2);
+            context.rotate((-angle % 360) * Math.PI / 180); // unrotate to keep everything else the smae
+            context.translate(-(x + sideLength/2),-(y + sideLength/2));
+            // angle changes every draw
+            //so the square spins because the angle is changing and rotate and rotate back each draw
+            context.restore();   
+            // Draw the target 
+            context.fillStyle = '#00FF00';
+            context.fillRect(targetX, targetY, targetLength, targetLength);
+
+            context.fillStyle = '#00FF00';
+            context.fillRect(targetA, targetB, targetLength, targetLength);
+
+
+            // Draw the score and time remaining
+            context.fillStyle = '#000000';
+            context.font = '24px Arial';
+            context.textAlign = 'left';
+            context.fillText('Score: ' + score, 10, 24);
+            context.fillText('Time Remaining: ' + countdown, 10, 50);
+            // End the game or keep playing
+            if (countdown <= 0) {
+                endGame();
+            } else {
+                window.requestAnimationFrame(draw);
+            }
+        }
+
+        // Start the game
+        menu();
+        canvas.focus();
+
+    </script>
+</body>
+
+</html>
