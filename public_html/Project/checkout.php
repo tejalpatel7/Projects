@@ -10,6 +10,7 @@ if (isset($_POST["GoToCheckout"]))
     $user_id = se($_POST,"total_cost", "",false);
 }
 
+
     $FirstName = se($_POST, "FirstName", "", false);
     $LastName = se($_POST, "LastName", "", false);
     $Address = se($_POST, "Address", "", false);
@@ -19,19 +20,26 @@ if (isset($_POST["GoToCheckout"]))
     $Zipcode = se($_POST, "Zipcode", "", false);
     $TotalCostCheck = se($_POST, "TotalCostCheck", "", false);
     $PaymentType = se($_POST, "PaymentType", "", false);
+    
 ?>
-
 <div class="container-fluid">
     <h1>Checkout</h1>
     <form method="POST">
-        <div class="mb-3">
-            <label class="form-label" for="FirstName">First Name</label>
-            <input class="form-control" type="text" id="FirstName" name="FirstName" required maxlength="70" />
+        <div class ="row">
+            <div class = "col-6">
+                <div class="mb-3">
+                    <label class="form-label" for="FirstName">First Name</label>
+                    <input class="form-control" type="text" id="FirstName" name="FirstName" required maxlength="70" />
+                </div>
+            </div>
+            <div class = "col-6">
+                <div class="mb-3">
+                    <label class="form-label" for="LastName">Last Name</label>
+                    <input class="form-control" type="text" id = "LastName" name="LastName" required maxlength="70" />
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label" for="LastName">Last Name</label>
-            <input class="form-control" type="text" id = "LastName" name="LastName" required maxlength="70" />
-        </div>
+
         <div class="mb-3">
             <label class="form-label" for="Address">Address</label>
             <input class="form-control" type="text" id="Address" name="Address" required minlength="1" />
@@ -60,78 +68,101 @@ if (isset($_POST["GoToCheckout"]))
             <label class="form-label" for="PaymentType">Payment Type</label>
             <input class="form-control" type="text" id ="PaymentType" name="PaymentType" required minlength="1" />
         </div>
-        <input type="submit" class="mt-3 btn btn-primary" value="Checkout" name = "ProceedWithCheckout"/>
+        <input type="submit" class="mt-3 btn btn-primary" value="Confirm Order" name="ProceeWithCheckout"/>
     </form>
+    
 </div>
+
+
 
 <script>
     function validate(form) {
-        //TODO 1: implement JavaScript validation
-        //ensure it returns false for an error and true for success
-
         return true;
     }
 </script>
 <?php
-require(__DIR__ . "/../../partials/flash.php");
+if (isset($_POST["ProceedWithCheckout"]))
+{
+$stmt = $db->prepare("SELECT Items.stock as PQ, Items.name as PN, Cart.name, Cart.item_id, Cart.name as CN, Items.unit_price as PP, Cart.desired_quantity as CQ, Cart.unit_price as CP FROM Cart INNER JOIN Items ON Cart.item_id = Items.id WHERE Cart.user_id = :uid");
+try {
+    $stmt->execute([":uid" => $user_id]);
+    $r = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if ($r) {
+        $results = $r;
+    }
+} catch (PDOException $e) {
+    error_log(var_export($e, true));
+    flash("<pre>" . var_export($e, true) . "</pre>");
+}
 
+$isValid = true;
+foreach ($results as $item){
+    $PQ = intval(se($item, "PQ", 0, false));
+    $PN = se($item, "PN", 0, false);
+    if (intval(se($item, "PP", 0, false)) != intval(se($item, "CP", 0, false)))
+    {
+        $isValid = false;
+        flash("Prices do not match!", "danger");
+    }
+    if (intval(se($item, "PQ", 0, false)) < intval(se($item, "CQ", 0, false)))
+    {
+        $isValid = false;
+        flash("We don't have enough stock!. The item with the stock issue is ".$PN." and you can only buy ".$PQ." of it", "danger");
+    }
+}
 
-if (isset($_POST["address"]) && isset($_POST["first_name"]) && isset($_POST["last_name"])) {
-    $user_id = get_user_id();
-
-    $db = getDB();
-    $stmt = $db->prepare("SELECT name, c.id as line_id, i.stock as stock, item_id, quantity, cost, (cost*quantity) as subtotal FROM Cart c JOIN Items i on c.item_id = i.id WHERE c.user_id = :uid");
-    try {
-        $stmt->execute([":uid" => $user_id]);
-        $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $total_price = 0;
-
-        $stmt = $db->prepare("INSERT INTO Orders (user_id, total_price, money_received, address, payment_method) VALUES(:user_id, :total_price, :money_received, :address, :payment_method)");
-
-        foreach ($cartItems as $cartItem) {
-            $total_price = (int)$total_price + (int)$cartItem['subtotal'];
-        }
-
-        try {
-            $result = $stmt->execute([
-                ":user_id" => $user_id,
-                ":total_price" => $total_price,
-                ":money_received" => $total_price,
-                ":address" => $email = se($_POST, "address", "", false),
-                ":payment_method" => 'cash',
-            ]);
-            $order_id = $db->lastInsertId();
-            foreach ($cartItems as $cartItem) {
-                $stmt = $db->prepare("INSERT INTO OrderItems (order_id, item_id, desired_quantity, unit_price) VALUES(:order_id, :item_id, :desired_quantity, :unit_price)");
-
-                try {
-                    $stmt->execute([
-                        ":order_id" => $order_id,
-                        ":item_id" => $cartItem['item_id'],
-                        ":desired_quantity" => $cartItem['desired_quantity'],
-                        ":unit_price" => $cartItem['cost'],
-                    ]);
-                } catch (PDOException $e) {
-                    error_log(var_export($e, true));
-                }
-
-                try {
-                    $stmtCartDelete = $db->prepare("DELETE FROM Cart where id = :id");
-                    $stmtCartDelete->execute([":id" => $cartItem['line_id']]);
-                } catch (PDOException $e) {
-                    error_log(var_export($e, true));
-                }
-            }
-
-        } catch (PDOException $e) {
-            error_log(var_export($e, true));
-        }
-
-        flash("Order confirmed!", "success");
-    } catch (PDOException $e) {
-        error_log("Error fetching cart" . var_export($e, true));
+if ($isValid != true)
+{
+    redirect("cart.php");
+}
+else
+{
+    $stmtNEW = $db->prepare("INSERT INTO Orders (user_id, payment, address, total_price) VALUES(:user, :payment, :address, :total_price)");
+    try 
+    {
+        $stmtNEW->execute([":user" => $user_id, ":payment" => $PaymentType, ":address" => $Address , ":total_price" => $TotalCostCheck]);
+        $order_id = $db->lastInsertId();
+    } 
+    catch (PDOException $e) 
+    {
+        error_log(var_export($e, true));
     }
 
+    $stmtNEW2 = $db->prepare("INSERT INTO OrderItems(item_id, desired_quantity, unit_price, order_id)
+    SELECT item_id, desired_quantity, unit_price, :order_id FROM Cart where user_id = :uid");
+        try 
+        {
+            $stmtNEW2->execute([":uid" => $user_id, ":order_id" => $order_id]);
+        } 
+        catch (PDOException $e) 
+        {
+            error_log(var_export($e, true));
+        }
+    
+    $stmtNEW3 = $db->prepare("UPDATE Items set stock = stock - (select quantity from Cart where item_id = Items.id and user_id = :uid) WHERE id in (SELECT item_id from Cart WHERE Cart.user_id = :uid)");
+        try 
+        {
+            $stmtNEW3->execute([":uid" => $user_id]);
+        } 
+        catch (PDOException $e) 
+        {
+            error_log(var_export($e, true));
+        }
+    
+    $newSTMT4 = $db->prepare("DELETE FROM Cart WHERE user_id = :user_id");
+        try 
+        {
+            $newSTMT4->execute([":user_id" => $user_id]);
+        }   
+        catch (PDOException $e) 
+        {
+            error_log(var_export($e, true));
+            flash("<pre>" . var_export($e, true) . "</pre>");
+        }
+
+    redirect("OrderConfirmation.php?id=$order_id");
 }
+}
+require(__DIR__ . "/../../partials/flash.php");
 
 ?>

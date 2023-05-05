@@ -72,6 +72,13 @@ try {
 }
 ?>
 
+<script>
+
+</script>
+
+
+
+
 <div class="container-fluid">
     <h1>Cart</h1>
     <table class="table table-striped">
@@ -122,16 +129,13 @@ try {
                     <input type="hidden" name="total_cost" value="<?php echo($total)?>"/>
                 </form>
             </td>
-
-
-
         </tr>
-
         </tbody>
     </table>
-
-
 </div>
+
+
+
 <?php
 require(__DIR__ . "/../../partials/flash.php");
 ?>
