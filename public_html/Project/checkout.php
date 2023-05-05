@@ -68,7 +68,7 @@ if (isset($_POST["GoToCheckout"]))
             <label class="form-label" for="PaymentType">Payment Type</label>
             <input class="form-control" type="text" id ="PaymentType" name="PaymentType" required minlength="1" />
         </div>
-        <input type="submit" class="mt-3 btn btn-primary" value="Confirm Order" name="ProceeWithCheckout"/>
+        <input type="submit" class="mt-3 btn btn-primary" value="Confirm Order" name="ProceedWithCheckout"/>
     </form>
     
 </div>
@@ -81,9 +81,11 @@ if (isset($_POST["GoToCheckout"]))
     }
 </script>
 <?php
+//tp7, date 5/5/2023
 if (isset($_POST["ProceedWithCheckout"]))
 {
-$stmt = $db->prepare("SELECT Items.stock as PQ, Items.name as PN, Cart.name, Cart.item_id, Cart.name as CN, Items.unit_price as PP, Cart.desired_quantity as CQ, Cart.unit_price as CP FROM Cart INNER JOIN Items ON Cart.item_id = Items.id WHERE Cart.user_id = :uid");
+$stmt = $db->prepare("SELECT Items.stock as PQ, Items.name as PN, Cart.item_id, Items.cost as PP, Cart.desired_quantity as CQ, Cart.unit_price as CP FROM Cart INNER JOIN Items ON Cart.item_id = Items.id WHERE Cart.user_id = :uid");
+// echo $stmt;
 try {
     $stmt->execute([":uid" => $user_id]);
     $r = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -117,7 +119,7 @@ if ($isValid != true)
 }
 else
 {
-    $stmtNEW = $db->prepare("INSERT INTO Orders (user_id, payment, address, total_price) VALUES(:user, :payment, :address, :total_price)");
+    $stmtNEW = $db->prepare("INSERT INTO Orders (user_id, payment_method, address, total_price) VALUES(:user, :payment, :address, :total_price)");
     try 
     {
         $stmtNEW->execute([":user" => $user_id, ":payment" => $PaymentType, ":address" => $Address , ":total_price" => $TotalCostCheck]);
@@ -128,18 +130,17 @@ else
         error_log(var_export($e, true));
     }
 
-    $stmtNEW2 = $db->prepare("INSERT INTO OrderItems(item_id, desired_quantity, unit_price, order_id)
-    SELECT item_id, desired_quantity, unit_price, :order_id FROM Cart where user_id = :uid");
-        try 
-        {
-            $stmtNEW2->execute([":uid" => $user_id, ":order_id" => $order_id]);
-        } 
-        catch (PDOException $e) 
-        {
-            error_log(var_export($e, true));
-        }
-    
-    $stmtNEW3 = $db->prepare("UPDATE Items set stock = stock - (select quantity from Cart where item_id = Items.id and user_id = :uid) WHERE id in (SELECT item_id from Cart WHERE Cart.user_id = :uid)");
+    foreach($results as $data)
+    {
+
+        $itemId = $data['item_id'];
+        $unit_price = $data['CP'];
+        $desired_quantity = $data['CQ'];
+        $stmtNEW2 = $db->prepare("INSERT INTO OrderItems(item_id, desired_quantity, unit_price, order_id) Values(:item_id, :desired_quantity, :unit_price, :order_id)");
+        $resultOrders = $stmtNEW2->execute([":order_id" => $order_id, ":item_id" => $itemId, ":desired_quantity" => $desired_quantity , ":unit_price" => $unit_price]);
+    }
+
+    $stmtNEW3 = $db->prepare("UPDATE Items set stock = stock - (select desired_quantity from Cart where item_id = Items.id and user_id = :uid) WHERE id in (SELECT item_id from Cart WHERE Cart.user_id = :uid)");
         try 
         {
             $stmtNEW3->execute([":uid" => $user_id]);

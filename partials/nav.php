@@ -60,6 +60,7 @@ session_start();
                             <li><a class="dropdown-item" href="<?php echo get_url('admin/assign_roles.php'); ?>">Assign</a></li>
                         </ul>
                     </li>
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="rolesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Items
@@ -69,9 +70,19 @@ session_start();
                             <li><a class="dropdown-item" href="<?php echo get_url('admin/list_item.php'); ?>">List</a></li>
                         </ul>
                     </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="rolesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Customer's Purchase history 
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="rolesDropdown">
+                            <li><a class="dropdown-item" href="<?php echo get_url('admin/orderHistoryUsers.php'); ?>">Order History</a></li>
+                        </ul>
+                    </li>
                 <?php endif; ?>
                 <?php if (is_logged_in()) : ?>
                     <li class="nav-item"><a class="nav-link" href="<?php echo get_url('Cart.php'); ?>">Cart</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo get_url('purchase_history.php'); ?>">Purchase History</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?php echo get_url('logout.php'); ?>">Logout</a></li>
                 <?php endif; ?>
             </ul>

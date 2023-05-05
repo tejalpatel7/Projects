@@ -4,17 +4,17 @@ is_logged_in(true);
 $user_id = get_user_id();
 $db = getDB();
 
-if (isset($_GET["id"]))
+if (isset($_POST["id"]))
 {
-    $order_id = (int)se($_GET, "id", -1, false);
+    $order_id = (int)se($_POST, "order_id", 0, false);
 }
 
 if($order_id < 1)
 {
     flash("Order ID is incorrect", "danger");
 }
-$results = [];
-$stmt = $db->prepare("SELECT Items.name as PN, Items.description as PD, 
+
+$stmt = $db->prepare("SELECT Items.name as PN, Items.description as PD, Items.cost as PP,
 OrderItems.desired_quantity as OQ, Orders.address as OA, Orders.payment_method as OP, Orders.total_price as OTP
 FROM Items INNER JOIN OrderItems ON Items.id = OrderItems.item_id INNER JOIN Orders ON Orders.id = OrderItems.order_id WHERE order_id = :oid");
 try {
@@ -28,45 +28,28 @@ try {
     flash("<pre>" . var_export($e, true) . "</pre>");
 }
 ?>
+
 <div class="container-fluid">
-    <h1>Your Order Product Information</h1>
+    <h1>Detailed Order Information</h1>
     <table class="table text-lightgrey">
         <thead>
-            <th>Product Name</th>
-            <th>Product Price</th>
-            <th>Product Description</th>
-            <th>Your Quantity</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Cost</th>
+            <th>Your quantity</th>
         </thead>
         <?php foreach ($results as $item) : ?>
         <tbody>
                 <td><?php se($item, "PN"); ?></td>
-                <td><?php se($item, "PP"); ?></td>
                 <td><?php se($item, "PD"); ?></td>
+                <td><?php se($item, "PP"); ?></td>
                 <td><?php se($item, "OQ"); ?></td>
+
         </tbody>
         <?php endforeach; ?>
     </table>
 </div>
-<div class="container-fluid">
-    <h1>Your Overall Order Information</h1>
-    <table class="table text-lightgrey">
-        <thead>
-            <th>Payment Method</th>
-            <th>Address</th>
-            <th>Total Cost</th>
-        </thead>
-        <?php foreach ($results as $item) : ?>
-        <tbody>
-                <td><?php se($item, "OP"); ?></td>
-                <td><?php se($item, "OA"); ?></td>
-                <td><?php se($item, "OTP"); ?></td>
-        </tbody>
-        <?php endforeach; ?>
-    </table>
-</div>
-<div class="container-fluid">
-    <h1 style="color:green; text-align:center"><strong>Thank you For Your Order. Have a good day!</strong></h1>
-</div>
+
 <?php
 require(__DIR__ . "/../../partials/flash.php");
 ?>
