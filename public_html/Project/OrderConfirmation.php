@@ -14,7 +14,7 @@ if($order_id < 1)
     flash("Order ID is incorrect", "danger");
 }
 $results = [];
-$stmt = $db->prepare("SELECT Items.name as PN, Items.description as PD, 
+$stmt = $db->prepare("SELECT Items.name as PN, Items.description as PD, Items.cost as PP,
 OrderItems.desired_quantity as OQ, Orders.address as OA, Orders.payment_method as OP, Orders.total_price as OTP
 FROM Items INNER JOIN OrderItems ON Items.id = OrderItems.item_id INNER JOIN Orders ON Orders.id = OrderItems.order_id WHERE order_id = :oid");
 try {
